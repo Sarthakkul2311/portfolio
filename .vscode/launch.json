@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Open Portfolio (localhost:8080)",
+      "url": "http://localhost:8080/index.html",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}

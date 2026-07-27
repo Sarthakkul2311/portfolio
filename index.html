@@ -4,94 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sarthak Kulkarni — Portfolio</title>
+  <meta name="description" content="Portfolio of Sarthak Kulkarni: Gen AI Developer, Data Engineer specializing in Azure, Databricks, PySpark, DevOps, ML & AI.">
+  <meta name="theme-color" content="#0E1A2B">
 
-  <meta name="description" content="Portfolio of Sarthak Kulkarni: Azure, Databricks, PySpark, Data Engineering, DevOps, ML & AI projects, publications, and leadership.">
-
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="stylesheet" href="assets/style.css">
-
-  <!--  SPACING & ALIGNMENT IMPROVEMENTS (SAFE ADDITION) -->
-  <style>
-    main section {
-      padding: 4rem 0;
-    }
-
-    .hero {
-      padding-top: 5rem;
-      padding-bottom: 5rem;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(260px, 360px) 1fr;
-      gap: 3rem;
-      align-items: center;
-    }
-
-    .hero-photo img {
-      width: 100%;
-      height: auto;
-      border-radius: 16px;
-      object-fit: cover;
-    }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-    }
-
-    h1 {
-      margin-bottom: 0.5rem;
-    }
-
-    h2 {
-      margin-bottom: 2rem;
-    }
-
-    .cards {
-      gap: 1.75rem;
-    }
-
-    .timeline .item {
-      margin-bottom: 2rem;
-    }
-
-    footer {
-      margin-top: 4rem;
-      padding: 2rem 0;
-    }
-
-    @media (max-width: 768px) {
-      .hero-grid {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-
-      .hero-photo {
-        max-width: 260px;
-        margin: 0 auto;
-      }
-
-      .btn-row {
-        justify-content: center;
-      }
-    }
-  </style>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
 
   <meta property="og:title" content="Sarthak Kulkarni — Portfolio">
-  <meta property="og:description" content="Azure, Databricks, PySpark, Data Engineering, DevOps, ML & AI projects, publications, and leadership.">
+  <meta property="og:description" content="Gen AI Developer · Data Engineer · Azure & Databricks. Based in Pune, India.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://sarthakkul2311.github.io/portfolio/assets/images/profile.jpg">
+  <meta property="og:url" content="https://sarthakkul2311.github.io/portfolio/">
+  <link rel="canonical" href="https://sarthakkul2311.github.io/portfolio/">
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Sarthak Kulkarni",
+    "url": "https://sarthakkul2311.github.io/portfolio/",
     "jobTitle": "Gen AI Developer / Data Engineer / Software Developer",
     "email": "mailto:sarthak.n.kulkarni@gmail.com",
     "telephone": "+91-93256-02791",
+    "image": "https://sarthakkul2311.github.io/portfolio/assets/images/profile.jpg",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Pune",
@@ -108,274 +46,538 @@
 </head>
 
 <body>
-
-<header>
-  <div class="container nav">
-    <a href="https://sarthakkul2311.github.io/portfolio/" class="brand">
-      <img src="assets/favicon.svg" alt="SK logo">
-      <span>Sarthak Kulkarni</span>
-    </a>
-    <nav class="nav-links" aria-label="Primary">
-      <a href="#about">About</a>
-      <a href="#skills">Skills</a>
-      <a href="#experience">Experience</a>
-      <a href="#education">Education</a>
-      <a href="#projects">Projects</a>
-      <a href="#publications">Publications</a>
-      <a href="#leadership">Leadership</a>
-      <a href="#certifications">Certifications</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌗 Theme</button>
+  <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-inner">
+      <span class="loader-mark">SK</span>
+      <span class="loader-bar"><i></i></span>
+    </div>
   </div>
-</header>
 
-<main>
+  <div class="ambient" aria-hidden="true">
+    <span class="orb orb-a"></span>
+    <span class="orb orb-b"></span>
+    <span class="orb orb-c"></span>
+    <span class="grain"></span>
+  </div>
 
-<!-- ABOUT / HERO -->
-<section class="hero" id="about">
-  <div class="container hero-grid">
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <figure class="hero-photo">
-      <img
-        src="assets/sarthak_profile.jpg"
-        alt="Portrait photo of Sarthak Kulkarni"
-        loading="lazy"
-        decoding="async"
-        width="1024"
-        height="1538">
-    </figure>
+  <nav class="side-dots" id="sideDots" aria-label="Section navigation">
+    <a href="#top" data-section="top" title="Top"></a>
+    <a href="#about" data-section="about" title="About"></a>
+    <a href="#skills" data-section="skills" title="Skills"></a>
+    <a href="#experience" data-section="experience" title="Experience"></a>
+    <a href="#projects" data-section="projects" title="Projects"></a>
+    <a href="#publications" data-section="publications" title="Research"></a>
+    <a href="#leadership" data-section="leadership" title="Leadership"></a>
+    <a href="#contact" data-section="contact" title="Contact"></a>
+  </nav>
 
-    <div>
-      <h1>Sarthak Kulkarni</h1>
-      <div class="title">Gen AI Developer • Data Engineer • Azure & Databricks • Pune, Maharashtra, India</div>
-      <div class="meta">Software Engineer • Hexaware Technologies</div>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <p style="margin-top:1rem; max-width:70ch;">
-        Passionate Software Engineer with hands-on experience in Gen AI, Azure, DevOps, Python,
-        Artificial Intelligence, Machine Learning, Real-time Data Pipelines, Time Series Analysis,
-        C++, and Web development. Over a year of experience across multiple roles, building a strong
-        foundation in data and software engineering. Proven leadership in student associations,
-        sports, and cultural events.
-      </p>
+  <header class="site-header" id="siteHeader">
+    <div class="container nav">
+      <a href="#top" class="brand" aria-label="Sarthak Kulkarni — Home">
+        <img src="assets/images/favicon.svg" alt="" width="32" height="32">
+        <span class="brand-text">Sarthak <em>Kulkarni</em></span>
+      </a>
 
-      <div class="btn-row">
-        <a class="btn primary" href="Sarthak-CV.pdf" target="_blank" rel="noopener" download>Download CV</a>
-        <a class="btn" href="mailto:sarthakkul2311@gmail.com">Email</a>
-        <a class="btn" href="tel:+919325602791">Call</a>
-        <a class="btn" href="https://linkedin.com/in/sarthak-kulkarni-/" target="_blank" rel="noopener">LinkedIn</a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav-links" id="primaryNav" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#publications">Research</a>
+        <a href="#leadership">Leadership</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14.5A8.5 8.5 0 0 1 9.5 3 7 7 0 1 0 21 14.5z"/></svg>
+        </button>
+        <a class="btn btn-sm primary nav-cta magnetic" href="assets/docs/Sarthak-CV.pdf" target="_blank" rel="noopener" download>Resume</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- HERO -->
+    <section class="hero" id="top" aria-label="Introduction">
+      <div class="hero-media" id="heroMedia">
+        <img
+          src="assets/images/profile.jpg"
+          alt="Professional portrait of Sarthak Kulkarni in a navy suit"
+          width="1024"
+          height="1538"
+          fetchpriority="high"
+          decoding="async"
+          id="heroPhoto">
+        <div class="hero-media-veil"></div>
+        <div class="hero-frame" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero-content">
+        <p class="hero-eyebrow reveal-hero">Software Engineer · Hexaware Technologies</p>
+        <h1 class="hero-name reveal-hero" id="heroName" data-text="Sarthak Kulkarni">
+          <span class="name-line" data-split>Sarthak</span>
+          <span class="name-line accent" data-split>Kulkarni</span>
+        </h1>
+        <p class="hero-role reveal-hero">
+          <span class="role-static">Gen AI Full-Stack Developer</span>
+          <span class="role-sep" aria-hidden="true">·</span>
+          <span class="role-rotator" id="roleRotator" aria-live="polite">Data Engineer</span>
+        </p>
+        <p class="hero-lead reveal-hero">
+          Building intelligent systems and resilient data platforms on Azure &amp; Databricks — from Pune, India.
+        </p>
+        <div class="hero-actions reveal-hero">
+          <a class="btn primary magnetic" href="assets/docs/Sarthak-CV.pdf" target="_blank" rel="noopener" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download CV
+          </a>
+          <a class="btn ghost magnetic" href="#contact">Get in touch</a>
+          <a class="btn ghost magnetic" href="https://linkedin.com/in/sarthak-kulkarni-/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <a class="scroll-cue reveal-hero" href="#about" aria-label="Scroll to about">
+          <span>Discover</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Azure</span><span>·</span><span>Databricks</span><span>·</span><span>PySpark</span><span>·</span>
+        <span>Gen AI</span><span>·</span><span>Python</span><span>·</span><span>Machine Learning</span><span>·</span>
+        <span>Data Factory</span><span>·</span><span>DevOps</span><span>·</span><span>React</span><span>·</span>
+        <span>Azure</span><span>·</span><span>Databricks</span><span>·</span><span>PySpark</span><span>·</span>
+        <span>Gen AI</span><span>·</span><span>Python</span><span>·</span><span>Machine Learning</span><span>·</span>
+        <span>Data Factory</span><span>·</span><span>DevOps</span><span>·</span><span>React</span><span>·</span>
       </div>
     </div>
 
-  </div>
-</section>
+    <!-- ABOUT -->
+    <section class="section about" id="about">
+      <div class="container narrow">
+        <header class="section-head reveal">
+          <p class="section-label">About</p>
+          <h2>A formal foundation in data, intelligence &amp; engineering</h2>
+        </header>
+        <div class="about-grid reveal">
+          <p class="about-lead">
+            Passionate software engineer with hands-on experience across Gen AI, Azure, DevOps, Python,
+            machine learning, real-time data pipelines, time series analysis, C++, and web development.
+          </p>
+          <p>
+            Over a year of professional experience across multiple roles has shaped a strong foundation
+            in data and software engineering — complemented by proven leadership in student associations,
+            sports, and cultural initiatives.
+          </p>
+          <dl class="about-facts">
+            <div>
+              <dt>Location</dt>
+              <dd>Pune, Maharashtra, India</dd>
+            </div>
+            <div>
+              <dt>Focus</dt>
+              <dd>Gen AI · Data Engineering · Azure</dd>
+            </div>
+            <div>
+              <dt>Currently</dt>
+              <dd>Data Engineer, Hexaware Technologies</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
 
-<!-- SKILLS -->
-<section id="skills">
-  <div class="container">
-    <h2>Technical Skills</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Programming & Data Science</h3>
-        <div class="badges">
-          <span class="badge">Python</span>
-          <span class="badge">C++</span>
-          <span class="badge">Java</span>
-          <span class="badge">SQL</span>
-          <span class="badge">Machine Learning</span>
-          <span class="badge">Artificial Intelligence</span>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Big Data & Cloud</h3>
-        <div class="badges">
-          <span class="badge">Microsoft Azure</span>
-          <span class="badge">Databricks</span>
-          <span class="badge">PySpark</span>
-          <span class="badge">Azure Data Factory</span>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Web Development</h3>
-        <div class="badges">
-          <span class="badge">HTML</span>
-          <span class="badge">CSS</span>
-          <span class="badge">JavaScript</span>
-          <span class="badge">ReactJS</span>
-          <span class="badge">PHP</span>
-          <span class="badge">Bootstrap</span>
-          <span class="badge">MySQL</span>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Tools & Platforms</h3>
-        <div class="badges">
-          <span class="badge">MS-SQL</span>
-          <span class="badge">Git</span>
-          <span class="badge">DevOps</span>
-          <span class="badge">Blockchain</span>
-          <span class="badge">Solidity</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    <!-- SKILLS -->
+    <section class="section skills" id="skills">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="section-label">Expertise</p>
+          <h2>Technical skills</h2>
+          <p class="section-sub">A curated set of languages, platforms, and practices used to ship reliable systems.</p>
+        </header>
 
-<!-- EXPERIENCE -->
-<section id="experience">
-  <div class="container">
-    <h2>Work Experience</h2>
-    <div class="timeline">
-      <div class="item">
-        <div class="when">Aug 2024 – Present • Pune, India</div>
-        <div class="content">
-          <h3>Data Engineer — Hexaware Technologies</h3>
-          <ul>
-            <li>Developed a Time Series Analysis project using PySpark SQL on Azure Databricks.</li>
-            <li>Built automated end-to-end real-time pipelines using Azure Data Factory and Databricks.</li>
+        <div class="skill-filters reveal" role="tablist" aria-label="Filter skills">
+          <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button class="filter-btn" data-filter="programming" role="tab" aria-selected="false">Programming</button>
+          <button class="filter-btn" data-filter="cloud" role="tab" aria-selected="false">Cloud &amp; Data</button>
+          <button class="filter-btn" data-filter="web" role="tab" aria-selected="false">Web</button>
+          <button class="filter-btn" data-filter="tools" role="tab" aria-selected="false">Tools</button>
+        </div>
+
+        <div class="skill-board reveal">
+          <article class="skill-group" data-category="programming">
+            <div class="skill-head">
+              <span class="skill-roman">I</span>
+              <h3>Programming &amp; Data Science</h3>
+            </div>
+            <ul class="skill-list">
+              <li><button type="button" class="skill-chip" data-skill="Python">Python</button></li>
+              <li><button type="button" class="skill-chip" data-skill="C++">C++</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Java">Java</button></li>
+              <li><button type="button" class="skill-chip" data-skill="SQL">SQL</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Machine Learning">Machine Learning</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Artificial Intelligence">Artificial Intelligence</button></li>
+            </ul>
+          </article>
+          <article class="skill-group" data-category="cloud">
+            <div class="skill-head">
+              <span class="skill-roman">II</span>
+              <h3>Big Data &amp; Cloud</h3>
+            </div>
+            <ul class="skill-list">
+              <li><button type="button" class="skill-chip" data-skill="Microsoft Azure">Microsoft Azure</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Databricks">Databricks</button></li>
+              <li><button type="button" class="skill-chip" data-skill="PySpark">PySpark</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Azure Data Factory">Azure Data Factory</button></li>
+            </ul>
+          </article>
+          <article class="skill-group" data-category="web">
+            <div class="skill-head">
+              <span class="skill-roman">III</span>
+              <h3>Web Development</h3>
+            </div>
+            <ul class="skill-list">
+              <li><button type="button" class="skill-chip" data-skill="HTML">HTML</button></li>
+              <li><button type="button" class="skill-chip" data-skill="CSS">CSS</button></li>
+              <li><button type="button" class="skill-chip" data-skill="JavaScript">JavaScript</button></li>
+              <li><button type="button" class="skill-chip" data-skill="ReactJS">ReactJS</button></li>
+              <li><button type="button" class="skill-chip" data-skill="PHP">PHP</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Bootstrap">Bootstrap</button></li>
+              <li><button type="button" class="skill-chip" data-skill="MySQL">MySQL</button></li>
+            </ul>
+          </article>
+          <article class="skill-group" data-category="tools">
+            <div class="skill-head">
+              <span class="skill-roman">IV</span>
+              <h3>Tools &amp; Platforms</h3>
+            </div>
+            <ul class="skill-list">
+              <li><button type="button" class="skill-chip" data-skill="MS-SQL">MS-SQL</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Git">Git</button></li>
+              <li><button type="button" class="skill-chip" data-skill="DevOps">DevOps</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Blockchain">Blockchain</button></li>
+              <li><button type="button" class="skill-chip" data-skill="Solidity">Solidity</button></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="section experience" id="experience">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="section-label">Career</p>
+          <h2>Work experience</h2>
+        </header>
+
+        <ol class="timeline">
+          <li class="timeline-item reveal is-open">
+            <button class="timeline-toggle" type="button" aria-expanded="true">
+              <div class="timeline-meta">
+                <time datetime="2024-08">Aug 2024 – Present</time>
+                <span>Pune, India</span>
+              </div>
+              <div class="timeline-summary">
+                <h3>Gen AI Engineer</h3>
+                <p class="org">Hexaware Technologies</p>
+              </div>
+              <span class="timeline-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="timeline-body">
+              <ul>
+                <li>Developed a Time Series Analysis project using PySpark SQL on Azure Databricks.</li>
+                <li>Built automated end-to-end real-time pipelines using Azure Data Factory and Databricks.</li>
+              </ul>
+            </div>
+          </li>
+          <li class="timeline-item reveal">
+            <button class="timeline-toggle" type="button" aria-expanded="false">
+              <div class="timeline-meta">
+                <time datetime="2023-07">Jul 2023 – Sep 2023</time>
+                <span>Pune, India</span>
+              </div>
+              <div class="timeline-summary">
+                <h3>Front-End Web Developer</h3>
+                <p class="org">Growdigis IT Solution Pvt Ltd</p>
+              </div>
+              <span class="timeline-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="timeline-body">
+              <ul>
+                <li>Developed responsive webpages with backend integration.</li>
+                <li>Deployed a website for a service provider company.</li>
+              </ul>
+            </div>
+          </li>
+          <li class="timeline-item reveal">
+            <button class="timeline-toggle" type="button" aria-expanded="false">
+              <div class="timeline-meta">
+                <time datetime="2023-04">Apr 2023 – May 2023</time>
+                <span>Pune, India</span>
+              </div>
+              <div class="timeline-summary">
+                <h3>Data Science Intern</h3>
+                <p class="org">CodeClause</p>
+              </div>
+              <span class="timeline-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="timeline-body">
+              <ul>
+                <li>Built customer segmentation using K-means clustering.</li>
+                <li>Created AI-based Age &amp; Gender detection models.</li>
+              </ul>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="section education" id="education">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="section-label">Academics</p>
+          <h2>Education</h2>
+        </header>
+        <div class="edu-list">
+          <article class="edu-item reveal">
+            <span class="edu-year">2024</span>
+            <div>
+              <h3>B.E. Computer Science <span class="edu-note">(Honors in Data Science)</span></h3>
+              <p>Zeal College of Engineering &amp; Research · SPPU · May 2024</p>
+            </div>
+          </article>
+          <article class="edu-item reveal">
+            <span class="edu-year">2020</span>
+            <div>
+              <h3>MTES Jr. College</h3>
+              <p>Computer Science · Maharashtra Board · May 2020</p>
+            </div>
+          </article>
+          <article class="edu-item reveal">
+            <span class="edu-year">2018</span>
+            <div>
+              <h3>Dnyanaganga English Medium School</h3>
+              <p>April 2018</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section projects" id="projects">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="section-label">Selected work</p>
+          <h2>Projects</h2>
+          <p class="section-sub">Interactive summaries — select a project to explore the details.</p>
+        </header>
+
+        <div class="project-panel reveal" id="projectPanel">
+          <div class="project-spotlight" id="projectSpotlight" aria-hidden="true"></div>
+          <div class="project-nav" role="tablist" aria-label="Projects">
+            <button class="project-tab active" role="tab" aria-selected="true" aria-controls="project-1" id="tab-1" data-project="1">
+              <span class="project-index">01</span>
+              <span>Data Transform Pipeline</span>
+            </button>
+            <button class="project-tab" role="tab" aria-selected="false" aria-controls="project-2" id="tab-2" data-project="2">
+              <span class="project-index">02</span>
+              <span>Customer Segmentation</span>
+            </button>
+            <button class="project-tab" role="tab" aria-selected="false" aria-controls="project-3" id="tab-3" data-project="3">
+              <span class="project-index">03</span>
+              <span>Age &amp; Gender Detection</span>
+            </button>
+          </div>
+
+          <div class="project-stages">
+            <div class="project-controls">
+              <button type="button" class="project-arrow" id="projectPrev" aria-label="Previous project">←</button>
+              <button type="button" class="project-arrow" id="projectNext" aria-label="Next project">→</button>
+            </div>
+            <article class="project-stage active" id="project-1" role="tabpanel" aria-labelledby="tab-1">
+              <p class="project-kicker">Cloud data engineering</p>
+              <h3>Data Transform Using Data Factory Pipeline</h3>
+              <p>End-to-end Azure Data Factory and Databricks pipeline for reliable ingestion, transformation, and delivery of analytics-ready data.</p>
+              <ul class="tag-row">
+                <li>Azure Data Factory</li>
+                <li>Databricks</li>
+                <li>PySpark</li>
+              </ul>
+            </article>
+            <article class="project-stage" id="project-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+              <p class="project-kicker">Machine learning</p>
+              <h3>Customer Segmentation System</h3>
+              <p>K-means based segmentation system designed to uncover market segments and support targeted decision-making.</p>
+              <ul class="tag-row">
+                <li>Python</li>
+                <li>K-means</li>
+                <li>Machine Learning</li>
+              </ul>
+            </article>
+            <article class="project-stage" id="project-3" role="tabpanel" aria-labelledby="tab-3" hidden>
+              <p class="project-kicker">Computer vision</p>
+              <h3>AI Age &amp; Gender Detection</h3>
+              <p>Computer vision models for age and gender detection, developed during the CodeClause data science internship.</p>
+              <ul class="tag-row">
+                <li>Computer Vision</li>
+                <li>Deep Learning</li>
+                <li>Python</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PUBLICATIONS -->
+    <section class="section publications" id="publications">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="section-label">Research</p>
+          <h2>Publications</h2>
+        </header>
+        <ul class="pub-list">
+          <li class="pub-item reveal">
+            <span class="pub-mark">IJSREM</span>
+            <div>
+              <h3>DizBoard: A Monitoring Dashboard Using Streamlit</h3>
+              <p>Published research on an interactive monitoring dashboard built with Streamlit.</p>
+            </div>
+          </li>
+          <li class="pub-item reveal">
+            <span class="pub-mark">IJSRST</span>
+            <div>
+              <h3>Survey on ML Algorithms for Risk-Controlled Trading</h3>
+              <p>A survey of machine learning approaches for risk-controlled trading strategies.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- LEADERSHIP + CERTS -->
+    <section class="section dual" id="leadership">
+      <div class="container dual-grid">
+        <div>
+          <header class="section-head reveal">
+            <p class="section-label">Beyond code</p>
+            <h2>Leadership</h2>
+          </header>
+          <ul class="lead-list">
+            <li class="reveal">
+              <strong>ACES</strong>
+              <span>President</span>
+            </li>
+            <li class="reveal">
+              <strong>Zeal Cricket Club</strong>
+              <span>Student Sports Coordinator</span>
+            </li>
+            <li class="reveal">
+              <strong>Zeal Cultural Center</strong>
+              <span>Acting Club Coordinator</span>
+            </li>
+          </ul>
+        </div>
+
+        <div id="certifications">
+          <header class="section-head reveal">
+            <p class="section-label">Credentials</p>
+            <h2>Certifications</h2>
+          </header>
+          <ul class="cert-grid">
+            <li class="reveal"><span>PCEP</span><small>Python Certified Entry-Level Programmer</small></li>
+            <li class="reveal"><span>AZ-900</span><small>Microsoft Azure Fundamentals</small></li>
+            <li class="reveal"><span>AI-900</span><small>Azure AI Fundamentals</small></li>
+            <li class="reveal"><span>AI-204</span><small>Artificial Intelligence</small></li>
           </ul>
         </div>
       </div>
-      <div class="item">
-        <div class="when">Jul 2023 – Sep 2023 • Pune, India</div>
-        <div class="content">
-          <h3>Front-End Web Developer — Growdigis IT Solution Pvt Ltd</h3>
-          <ul>
-            <li>Developed responsive webpages with backend integration.</li>
-            <li>Deployed a website for a service provider company.</li>
-          </ul>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact">
+      <div class="contact-banner" aria-hidden="true"></div>
+      <div class="container contact-wrap">
+        <header class="section-head reveal">
+          <p class="section-label">Connect</p>
+          <h2>Let’s build something considered</h2>
+          <p class="section-sub">Open to conversations on Gen AI, data engineering, and collaborative product work.</p>
+        </header>
+
+        <div class="contact-layout reveal">
+          <aside class="contact-aside">
+            <button class="contact-link" type="button" data-copy="sarthak.n.kulkarni@gmail.com" data-copy-label="Email copied">
+              <span class="contact-kicker">Email · click to copy</span>
+              <span>sarthak.n.kulkarni@gmail.com</span>
+            </button>
+            <a class="contact-link" href="tel:+919325602791">
+              <span class="contact-kicker">Phone</span>
+              <span>+91 93256 02791</span>
+            </a>
+            <a class="contact-link" href="https://linkedin.com/in/sarthak-kulkarni-/" target="_blank" rel="noopener">
+              <span class="contact-kicker">LinkedIn</span>
+              <span>linkedin.com/in/sarthak-kulkarni-</span>
+            </a>
+            <a class="contact-link" href="assets/docs/Sarthak-CV.pdf" target="_blank" rel="noopener" download>
+              <span class="contact-kicker">Resume</span>
+              <span>Download CV (PDF)</span>
+            </a>
+          </aside>
+
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" autocomplete="name" required placeholder="Your name">
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" autocomplete="email" required placeholder="you@company.com">
+            </div>
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" required placeholder="A short note about how we might work together…"></textarea>
+            </div>
+            <button type="submit" class="btn primary magnetic">Send message</button>
+            <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+          </form>
         </div>
       </div>
-      <div class="item">
-        <div class="when">Apr 2023 – May 2023 • Pune, India</div>
-        <div class="content">
-          <h3>Data Science Intern — CodeClause</h3>
-          <ul>
-            <li>Built customer segmentation using K-means.</li>
-            <li>Created AI-based Age & Gender detection models.</li>
-          </ul>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/images/favicon.svg" alt="" width="28" height="28">
+        <div>
+          <strong>Sarthak Kulkarni</strong>
+          <span>Pune, Maharashtra, India</span>
         </div>
       </div>
+      <p class="footer-copy">© <span id="year"></span> Sarthak Kulkarni. Crafted with care.</p>
+      <button class="back-top magnetic" id="backTop" type="button" aria-label="Back to top">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
     </div>
-  </div>
-</section>
+  </footer>
 
-<!-- EDUCATION -->
-<section id="education">
-  <div class="container">
-    <h2>Education</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>B.E. Computer Science (Honors in Data Science)</h3>
-        <div class="sub">Zeal College of Engineering & Research • SPPU • May 2024</div>
-      </div>
-      <div class="card">
-        <h3>MTES Jr. College</h3>
-        <div class="sub">Computer Science • Maharashtra Board • May 2020</div>
-      </div>
-      <div class="card">
-        <h3>Dnyanaganga English Medium School</h3>
-        <div class="sub">April 2018</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROJECTS -->
-<section id="projects">
-  <div class="container">
-    <h2>Projects</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Data Transform Using DataFactory Pipeline</h3>
-        <p>End-to-end Azure Data Factory + Databricks pipeline.</p>
-      </div>
-      <div class="card">
-        <h3>Customer Segmentation System</h3>
-        <p>K-means based segmentation for market insights.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PUBLICATIONS -->
-<section id="publications">
-  <div class="container">
-    <h2>Publications & Research</h2>
-    <div class="list">
-      <div class="row">
-        <span class="dot"></span>
-        <strong>DizBoard: A Monitoring Dashboard Using Streamlit — IJSREM</strong>
-      </div>
-      <div class="row">
-        <span class="dot"></span>
-        <strong>Survey on ML Algorithms for Risk-Controlled Trading — IJSRST</strong>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LEADERSHIP -->
-<section id="leadership">
-  <div class="container">
-    <h2>Leadership & Extra-Curricular</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>ACES</h3>
-        <div class="sub">President</div>
-      </div>
-      <div class="card">
-        <h3>Zeal Cricket Club</h3>
-        <div class="sub">Student Sports Coordinator</div>
-      </div>
-      <div class="card">
-        <h3>Zeal Cultural Center</h3>
-        <div class="sub">Acting Club Coordinator</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CERTIFICATIONS -->
-<section id="certifications">
-  <div class="container">
-    <h2>Certifications</h2>
-    <div class="list">
-      <div class="row"><span class="dot"></span>PCEP</div>
-      <div class="row"><span class="dot"></span>AZ-900</div>
-      <div class="row"><span class="dot"></span>AI-900</div>
-      <div class="row"><span class="dot"></span>AI-204</div>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact">
-  <div class="container">
-    <h2>Contact</h2>
-    <div class="btn-row">
-      <a class="btn" href="mailto:sarthak.n.kulkarni@gmail.com">📧 sarthak.n.kulkarni@gmail.com</a>
-      <a class="btn" href="tel:+919325602791">📞 +91 93256 02791</a>
-      <a class="btn" href="https://linkedin.com/in/sarthak-kulkarni-/" target="_blank" rel="noopener">🔗 LinkedIn</a>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  <div class="container">
-    <div class="links">
-      <span>© <span id="year"></span> Sarthak Kulkarni</span>
-      <span>• Pune, Maharashtra, India</span>
-    </div>
-  </div>
-</footer>
-
-<script src="assets/script.js"></script>
-<script>
-  document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
