@@ -177,11 +177,16 @@
       addBubble("assistant", answer);
       setStatus("");
     } catch (err) {
+      const raw = String(err && err.message ? err.message : err);
+      const blocked =
+        /failed to fetch|networkerror|load failed|blocked/i.test(raw);
       addBubble(
         "assistant",
-        "I could not reach the assistant right now. Please try again in a moment, or email sarthak.n.kulkarni@gmail.com."
+        blocked
+          ? "I could not reach the assistant from this network. If you are on office Wi‑Fi, try mobile data or home internet. You can also email sarthak.n.kulkarni@gmail.com."
+          : "I could not reach the assistant right now. Please try again in a moment, or email sarthak.n.kulkarni@gmail.com."
       );
-      setStatus(String(err && err.message ? err.message : err), true);
+      setStatus(raw, true);
     } finally {
       if (submitBtn) submitBtn.disabled = false;
       input.focus();

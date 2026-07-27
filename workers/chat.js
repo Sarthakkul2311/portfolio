@@ -1,41 +1,24 @@
 /**
  * Cloudflare Worker — Groq chat proxy (FREE plan)
  *
- * Dashboard setup (recommended):
- * 1. https://dash.cloudflare.com → Workers & Pages → Create Worker
- * 2. Name it: sarthak-portfolio-chat
- * 3. Paste this file code → Deploy
- * 4. Settings → Variables and Secrets → Add secret GROQ_API_KEY
- * 5. Copy Worker URL into assets/js/config.js → chatProxyUrlProduction
- *
- * Or CLI (from /workers):
- *   npx wrangler login
- *   npx wrangler deploy
- *   npx wrangler secret put GROQ_API_KEY
+ * In Cloudflare dashboard:
+ * 1. Open your Worker → Edit code
+ * 2. Replace ALL code with this file
+ * 3. Deploy
+ * 4. Settings → Variables and Secrets → secret GROQ_API_KEY = your gsk_ key
  */
 
-const ALLOWED_ORIGINS = [
-  "https://sarthakkul2311.github.io",
-  "http://127.0.0.1:5500",
-  "http://localhost:5500",
-  "http://127.0.0.1:8080",
-  "http://localhost:8080",
-];
-
-function corsHeaders(request) {
-  const origin = request.headers.get("Origin") || "";
-  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+function corsHeaders() {
   return {
-    "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
     "Access-Control-Allow-Headers": "Content-Type",
-    Vary: "Origin",
   };
 }
 
 export default {
   async fetch(request, env) {
-    const cors = corsHeaders(request);
+    const cors = corsHeaders();
 
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: cors });
@@ -45,22 +28,34 @@ export default {
     const path = url.pathname.replace(/\/$/, "") || "/";
     const isChatPath = path === "/chat" || path === "/";
 
-    if (request.method !== "POST" || !isChatPath) {
+    if (request.method === "GET") {
       return new Response(
         JSON.stringify({
           ok: true,
           service: "sarthak-portfolio-chat",
           usage: "POST /chat with { model, messages }",
         }),
-        { status: request.method === "GET" ? 200 : 404, headers: { ...cors, "Content-Type": "application/json" } }
+        { status: 200, headers: { ...cors, "Content-Type": "application/json" } }
       );
     }
 
-    if (!env.GROQ_API_KEY) {
-      return new Response(JSON.stringify({ error: "GROQ_API_KEY secret is not set" }), {
-        status: 500,
+    if (request.method !== "POST" || !isChatPath) {
+      return new Response(JSON.stringify({ error: "Not found. Use POST /chat" }), {
+        status: 404,
         headers: { ...cors, "Content-Type": "application/json" },
       });
+    }
+
+    if (!env.GROQ_API_KEY) {
+      return new Response(
+        JSON.stringify({
+          error: "GROQ_API_KEY secret is not set on this Worker",
+        }),
+        {
+          status: 500,
+          headers: { ...cors, "Content-Type": "application/json" },
+        }
+      );
     }
 
     let payload;
@@ -83,24 +78,37 @@ export default {
       });
     }
 
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + env.GROQ_API_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        temperature: 0.2,
-        max_tokens: 700,
-        messages,
-      }),
-    });
+    try {
+      const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + env.GROQ_API_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.2,
+          max_tokens: 700,
+          messages,
+        }),
+      });
 
-    const data = await groqRes.text();
-    return new Response(data, {
-      status: groqRes.status,
-      headers: { ...cors, "Content-Type": "application/json" },
-    });
+      const data = await groqRes.text();
+      return new Response(data, {
+        status: groqRes.status,
+        headers: { ...cors, "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      return new Response(
+        JSON.stringify({
+          error: "Upstream request failed",
+          detail: String(err && err.message ? err.message : err),
+        }),
+        {
+          status: 502,
+          headers: { ...cors, "Content-Type": "application/json" },
+        }
+      );
+    }
   },
 };
