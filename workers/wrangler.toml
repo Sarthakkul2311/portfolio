@@ -1,0 +1,7 @@
+name = "sarthak-portfolio-chat"
+main = "chat.js"
+compatibility_date = "2024-11-01"
+
+# Free Cloudflare Workers plan is enough for a personal portfolio chatbot.
+# After deploy, set secret:
+#   npx wrangler secret put GROQ_API_KEY

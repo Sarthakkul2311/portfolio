@@ -356,12 +356,13 @@
     });
   });
 
-  /* ---------- Contact form (mailto — fully frontend) ---------- */
-  contactForm?.addEventListener("submit", (e) => {
+  /* ---------- Contact form (FormSubmit — real inbox delivery) ---------- */
+  contactForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = /** @type {HTMLInputElement} */ (document.getElementById("name"))?.value.trim();
     const email = /** @type {HTMLInputElement} */ (document.getElementById("email"))?.value.trim();
     const message = /** @type {HTMLTextAreaElement} */ (document.getElementById("message"))?.value.trim();
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
 
     if (!name || !email || !message) {
       if (formNote) {
@@ -371,18 +372,57 @@
       return;
     }
 
-    const subject = encodeURIComponent("Portfolio inquiry from " + name);
-    const bodyText = encodeURIComponent(
-      "Name: " + name + "\nEmail: " + email + "\n\n" + message
-    );
+    const inbox =
+      (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.contactEmail) ||
+      "sarthak.n.kulkarni@gmail.com";
 
     if (formNote) {
       formNote.classList.remove("error");
-      formNote.textContent = "Opening your email client…";
+      formNote.textContent = "Sending your message…";
     }
+    if (submitBtn) submitBtn.disabled = true;
 
-    window.location.href =
-      "mailto:sarthak.n.kulkarni@gmail.com?subject=" + subject + "&body=" + bodyText;
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(inbox), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: "Portfolio contact from " + name,
+          _template: "table",
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error((data && data.message) || "Could not send message");
+      }
+
+      if (formNote) {
+        formNote.textContent =
+          "Message sent. If this is your first submission, check your inbox to activate FormSubmit.";
+      }
+      contactForm.reset();
+      showToast("Message sent");
+    } catch (_) {
+      // Fallback: open mail client if FormSubmit is blocked/unavailable
+      const subject = encodeURIComponent("Portfolio inquiry from " + name);
+      const bodyText = encodeURIComponent(
+        "Name: " + name + "\nEmail: " + email + "\n\n" + message
+      );
+      if (formNote) {
+        formNote.classList.add("error");
+        formNote.textContent = "Direct send failed — opening your email app as a backup…";
+      }
+      window.location.href = "mailto:" + inbox + "?subject=" + subject + "&body=" + bodyText;
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 
   /* ---------- Back to top ---------- */

@@ -1,0 +1,14 @@
+# Secrets — never commit
+api-key.txt
+.env
+.env.*
+assets/js/config.local.js
+.dev.vars
+.wrangler/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+node_modules/
