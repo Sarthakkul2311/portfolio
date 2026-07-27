@@ -555,6 +555,7 @@
             </div>
             <button type="submit" class="btn primary magnetic">Send message</button>
             <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
+            <p class="form-hint">Messages are delivered to Sarthak’s inbox. First-time senders may need one email confirmation.</p>
           </form>
         </div>
       </div>
@@ -578,6 +579,41 @@
     </div>
   </footer>
 
+  <div class="chatbot" id="chatbot">
+    <button type="button" class="chat-toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel">
+      <span class="chat-toggle-label">Ask about me</span>
+    </button>
+
+    <section class="chat-panel" id="chatPanel" hidden aria-label="Portfolio assistant">
+      <header class="chat-header">
+        <div>
+          <p class="chat-kicker">Portfolio assistant</p>
+          <h2>Ask about Sarthak</h2>
+        </div>
+        <button type="button" class="chat-close" id="chatClose" aria-label="Close chat">×</button>
+      </header>
+
+      <div class="chat-prompts">
+        <button type="button" data-chat-prompt="What is Sarthak’s current role?">Current role</button>
+        <button type="button" data-chat-prompt="What are Sarthak’s main technical skills?">Skills</button>
+        <button type="button" data-chat-prompt="Summarize Sarthak’s projects">Projects</button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+      <p class="chat-status" id="chatStatus" role="status"></p>
+
+      <form class="chat-form" id="chatForm">
+        <label class="visually-hidden" for="chatInput">Your question</label>
+        <input id="chatInput" type="text" autocomplete="off" maxlength="500" placeholder="Ask about experience, skills, projects…">
+        <button type="submit" class="btn primary btn-sm">Send</button>
+      </form>
+      <p class="chat-footnote">Answers are limited to this portfolio and resume.</p>
+    </section>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/knowledge.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/chatbot.js"></script>
 </body>
 </html>
