@@ -18,7 +18,7 @@
   window.PORTFOLIO_CONFIG = {
     contactEmail: "sarthak.n.kulkarni@gmail.com",
     chatProxyUrlLocal: "http://127.0.0.1:8787/chat",
-    chatProxyUrlProduction: "",
+    chatProxyUrlProduction: "https://holy-violet-14e6.sarthakkul2311.workers.dev/chat",
     chatModel: "llama-3.3-70b-versatile",
     get chatProxyUrl() {
       return isLocal ? this.chatProxyUrlLocal : this.chatProxyUrlProduction;
