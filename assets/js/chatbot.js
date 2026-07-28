@@ -43,8 +43,7 @@
     knowledge;
 
   const NETWORK_BLOCK_MESSAGE =
-    "It looks like your current Wi‑Fi or network is blocking this assistant — " +
-    "this portfolio website itself is working fine. " +
+    "It looks like your current Wi‑Fi or network is blocking this assistant. " +
     "Please switch to another network (for example mobile data or home internet) and try again. " +
     "You can also reach Sarthak anytime at sarthak.n.kulkarni@gmail.com.";
 
