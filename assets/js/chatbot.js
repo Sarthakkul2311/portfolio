@@ -20,6 +20,7 @@
   const input = document.getElementById("chatInput");
   const messagesEl = document.getElementById("chatMessages");
   const statusEl = document.getElementById("chatStatus");
+  const typingEl = document.getElementById("chatTyping");
 
   if (!root || !toggle || !panel || !form || !input || !messagesEl) return;
 
@@ -77,6 +78,11 @@
     row.textContent = text;
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function setTyping(on) {
+    if (!typingEl) return;
+    typingEl.hidden = !on;
   }
 
   function setStatus(text, isError) {
@@ -143,7 +149,8 @@
 
     input.value = "";
     addBubble("user", question);
-    setStatus("Thinking…");
+    setStatus("");
+    setTyping(true);
 
     const submitBtn = form.querySelector("button[type='submit']");
     if (submitBtn) submitBtn.disabled = true;
@@ -153,16 +160,19 @@
       history.push({ role: "user", content: question });
       history.push({ role: "assistant", content: answer });
       if (history.length > 10) history.splice(0, history.length - 10);
+      setTyping(false);
       addBubble("assistant", answer);
       setStatus("");
     } catch (err) {
       const blocked = isNetworkBlockError(err);
+      setTyping(false);
       addBubble("assistant", blocked ? NETWORK_BLOCK_MESSAGE : GENERIC_ERROR_MESSAGE);
       setStatus(
         blocked ? "Network restriction detected on your side" : "Please try again shortly",
         true
       );
     } finally {
+      setTyping(false);
       if (submitBtn) submitBtn.disabled = false;
       input.focus();
     }

@@ -20,7 +20,32 @@
   const projectPanel = document.getElementById("projectPanel");
   const toast = document.getElementById("toast");
   const sideDots = document.getElementById("sideDots");
+  const chapterRail = document.getElementById("chapterRail");
+  const chapterIndex = document.getElementById("chapterIndex");
+  const chapterLabel = document.getElementById("chapterLabel");
+  const chapterRingFg = document.getElementById("chapterRingFg");
+  const timelineProgress = document.getElementById("timelineProgress");
+  const timelineWrap = document.querySelector(".timeline-wrap");
+  const pipeline = document.getElementById("pipelineDiagram");
+  const metricStrip = document.getElementById("metricStrip");
+  const meterPanel = document.querySelector(".meter-panel");
+  const meterLive = document.getElementById("meterLive");
+  const domainLive = document.getElementById("domainLive");
+  const careerFill = document.getElementById("careerFill");
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const RING_LEN = 113.1;
+
+  const chapterMeta = {
+    top: { index: "01", label: "Introduction" },
+    about: { index: "02", label: "About" },
+    skills: { index: "03", label: "Expertise" },
+    experience: { index: "04", label: "Career" },
+    education: { index: "05", label: "Academics" },
+    projects: { index: "06", label: "Projects" },
+    publications: { index: "07", label: "Research" },
+    leadership: { index: "08", label: "Leadership" },
+    contact: { index: "09", label: "Contact" },
+  };
 
   function showToast(message) {
     if (!toast) return;
@@ -101,7 +126,7 @@
     if (e.key === "Escape") setNavOpen(false);
   });
 
-  /* ---------- Scroll progress / header / active nav ---------- */
+  /* ---------- Scroll progress / header / active nav / chapters ---------- */
   const sectionIds = [
     "top",
     "about",
@@ -114,6 +139,49 @@
   ];
   const navLinks = Array.from(primaryNav?.querySelectorAll("a") || []);
   const dotLinks = Array.from(sideDots?.querySelectorAll("a") || []);
+  const chapterSections = Array.from(document.querySelectorAll("[data-chapter]"));
+
+  function setChapter(id) {
+    const meta = chapterMeta[id] || chapterMeta.top;
+    if (chapterIndex) chapterIndex.textContent = meta.index;
+    if (chapterLabel) chapterLabel.textContent = meta.label;
+  }
+
+  function updateTimelineProgress() {
+    if (!timelineWrap || !timelineProgress || reduceMotion) return;
+    const rect = timelineWrap.getBoundingClientRect();
+    const view = window.innerHeight || 1;
+    const start = view * 0.75;
+    const end = view * 0.25;
+    const raw = (start - rect.top) / (start - end + rect.height);
+    const pct = Math.max(0, Math.min(1, raw)) * 100;
+    timelineProgress.style.height = pct + "%";
+  }
+
+  function updateSectionMotion() {
+    if (reduceMotion) return;
+    chapterSections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const view = window.innerHeight || 1;
+      const visible = rect.top < view * 0.85 && rect.bottom > view * 0.15;
+      section.classList.toggle("is-inview", visible);
+
+      const mid = rect.top + rect.height / 2;
+      const offset = (mid - view / 2) / view;
+      const watermark = section.querySelector(".section-watermark");
+      if (watermark && visible) {
+        watermark.style.transform = "translateY(" + offset * -18 + "px)";
+      }
+    });
+
+    document.querySelectorAll("[data-parallax]").forEach((el) => {
+      const strength = parseFloat(el.getAttribute("data-parallax") || "0.1");
+      const rect = el.getBoundingClientRect();
+      const view = window.innerHeight || 1;
+      const progressY = (rect.top + rect.height / 2 - view / 2) / view;
+      el.style.transform = "translate3d(0," + progressY * strength * -40 + "px,0)";
+    });
+  }
 
   function onScroll() {
     const scrollTop = window.scrollY || doc.scrollTop;
@@ -121,7 +189,11 @@
     const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
 
     if (progress) progress.style.width = pct + "%";
+    if (chapterRingFg) {
+      chapterRingFg.style.strokeDashoffset = String(RING_LEN - (RING_LEN * pct) / 100);
+    }
     header?.classList.toggle("scrolled", scrollTop > 12);
+    chapterRail?.classList.toggle("is-visible", scrollTop > 120);
 
     let current = "top";
     for (const id of sectionIds) {
@@ -130,22 +202,56 @@
       if (el.getBoundingClientRect().top - 140 <= 0) current = id;
     }
 
+    const edu = document.getElementById("education");
+    if (edu && edu.getBoundingClientRect().top - 140 <= 0) {
+      const proj = document.getElementById("projects");
+      if (!proj || proj.getBoundingClientRect().top - 140 > 0) {
+        current = "education";
+      }
+    }
+
+    setChapter(current);
+
     navLinks.forEach((link) => {
       const href = link.getAttribute("href") || "";
-      link.classList.toggle("active", href === "#" + current);
+      const matchId = current === "education" ? "experience" : current;
+      link.classList.toggle("active", href === "#" + matchId);
     });
 
     dotLinks.forEach((link) => {
-      link.classList.toggle("active", link.getAttribute("data-section") === current);
+      const section = link.getAttribute("data-section");
+      const matchId = current === "education" ? "experience" : current;
+      link.classList.toggle("active", section === matchId);
     });
 
     if (heroPhoto && !reduceMotion) {
       const shift = Math.min(scrollTop * 0.18, 80);
       heroPhoto.style.transform = "scale(1) translate3d(0," + shift + "px,0)";
     }
+
+    updateTimelineProgress();
+    updateSectionMotion();
+    if (typeof window.__syncCareerScroll === "function") {
+      window.__syncCareerScroll();
+    }
+    if (typeof window.__syncEduScroll === "function") {
+      window.__syncEduScroll();
+    }
   }
 
-  window.addEventListener("scroll", onScroll, { passive: true });
+  let ticking = false;
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        onScroll();
+        ticking = false;
+      });
+    },
+    { passive: true }
+  );
   onScroll();
 
   /* ---------- Reveal on scroll ---------- */
@@ -194,10 +300,186 @@
     }, 2800);
   }
 
-  /* ---------- Skill filters + chip select ---------- */
+  /* ---------- Animated counters + meter / metric bars ---------- */
+  function animateCount(el, to, suffix, duration) {
+    if (reduceMotion) {
+      el.textContent = to + suffix;
+      return;
+    }
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(to * eased) + suffix;
+      if (t < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function animateMeters() {
+    document.querySelectorAll(".meter-item").forEach((item, i) => {
+      const level = parseInt(item.getAttribute("data-level") || "0", 10);
+      const pctEl = item.querySelector(".meter-pct");
+      window.setTimeout(() => {
+        item.classList.add("is-hot");
+        if (pctEl) animateCount(pctEl, level, "%", 900);
+      }, reduceMotion ? 0 : i * 70);
+    });
+    meterPanel?.classList.add("is-hot");
+  }
+
+  if ("IntersectionObserver" in window) {
+    const dataIo = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const target = entry.target;
+          if (target.id === "metricStrip" || target.classList.contains("metric-strip")) {
+            target.classList.add("is-hot");
+            target.querySelectorAll("[data-count]").forEach((el) => {
+              const to = parseInt(el.getAttribute("data-count") || "0", 10);
+              const suffix = el.getAttribute("data-suffix") || "";
+              animateCount(el, to, suffix, 1100);
+            });
+          }
+          if (target.classList.contains("meter-panel") || target.id === "meterList") {
+            animateMeters();
+          }
+          if (target.hasAttribute("data-animate-bars")) {
+            target.classList.add("is-hot");
+          }
+          dataIo.unobserve(target);
+        });
+      },
+      { threshold: 0.35 }
+    );
+    if (metricStrip) dataIo.observe(metricStrip);
+    if (meterPanel) dataIo.observe(meterPanel);
+    document.querySelectorAll("[data-animate-bars]").forEach((el) => dataIo.observe(el));
+  } else {
+    metricStrip?.classList.add("is-hot");
+    animateMeters();
+    document.querySelectorAll("[data-animate-bars]").forEach((el) => el.classList.add("is-hot"));
+    document.querySelectorAll("[data-count]").forEach((el) => {
+      el.textContent =
+        (el.getAttribute("data-count") || "0") + (el.getAttribute("data-suffix") || "");
+    });
+  }
+
+  /* ---------- Domain radar ---------- */
+  const domains = [
+    { name: "Gen AI", value: 88, blurb: "Building intelligent systems and AI-assisted workflows" },
+    { name: "Data Eng", value: 90, blurb: "Pipelines, Databricks, PySpark, and analytics-ready data" },
+    { name: "Cloud", value: 86, blurb: "Azure services, Data Factory, and cloud-native delivery" },
+    { name: "Web", value: 74, blurb: "Responsive interfaces with React and modern front-end craft" },
+    { name: "Leadership", value: 82, blurb: "Student associations, sports, and cultural coordination" },
+  ];
+
+  (function buildRadar() {
+    const svg = document.getElementById("domainRadar");
+    const area = document.getElementById("radarArea");
+    const pointsG = document.getElementById("radarPoints");
+    const labelsG = document.getElementById("radarLabels");
+    const grid = svg?.querySelector(".radar-grid");
+    const legend = document.getElementById("domainLegend");
+    if (!svg || !area || !pointsG || !labelsG || !grid || !legend) return;
+
+    const cx = 140;
+    const cy = 140;
+    const maxR = 92;
+    const n = domains.length;
+
+    function polar(i, ratio) {
+      const angle = -Math.PI / 2 + (i * 2 * Math.PI) / n;
+      return {
+        x: cx + Math.cos(angle) * maxR * ratio,
+        y: cy + Math.sin(angle) * maxR * ratio,
+      };
+    }
+
+    [0.35, 0.6, 0.85, 1].forEach((ratio) => {
+      const pts = domains
+        .map((_, i) => {
+          const p = polar(i, ratio);
+          return p.x.toFixed(1) + "," + p.y.toFixed(1);
+        })
+        .join(" ");
+      const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      poly.setAttribute("points", pts);
+      grid.appendChild(poly);
+    });
+
+    const areaPts = domains
+      .map((d, i) => {
+        const p = polar(i, d.value / 100);
+        return p.x.toFixed(1) + "," + p.y.toFixed(1);
+      })
+      .join(" ");
+    area.setAttribute("points", areaPts);
+
+    domains.forEach((d, i) => {
+      const p = polar(i, d.value / 100);
+      const tip = polar(i, 1.18);
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", String(p.x));
+      circle.setAttribute("cy", String(p.y));
+      circle.setAttribute("r", "4.5");
+      circle.classList.add("radar-point");
+      circle.dataset.index = String(i);
+      pointsG.appendChild(circle);
+
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("x", String(tip.x));
+      label.setAttribute("y", String(tip.y));
+      label.classList.add("radar-label");
+      label.textContent = d.name;
+      labelsG.appendChild(label);
+
+      const li = document.createElement("li");
+      li.dataset.index = String(i);
+      li.innerHTML = "<strong>" + d.name + "</strong><span>" + d.value + "</span>";
+      legend.appendChild(li);
+
+      function activate() {
+        pointsG.querySelectorAll(".radar-point").forEach((el) => el.classList.remove("is-active"));
+        legend.querySelectorAll("li").forEach((el) => el.classList.remove("is-active"));
+        circle.classList.add("is-active");
+        li.classList.add("is-active");
+        if (domainLive) domainLive.textContent = d.name + " · " + d.value + "/100 — " + d.blurb;
+      }
+
+      circle.addEventListener("mouseenter", activate);
+      circle.addEventListener("focus", activate);
+      circle.addEventListener("click", activate);
+      li.addEventListener("mouseenter", activate);
+      li.addEventListener("click", activate);
+    });
+  })();
+
+  /* ---------- Skill filters + chip select + meters ---------- */
   const filterBtns = document.querySelectorAll(".filter-btn");
   const skillGroups = document.querySelectorAll(".skill-group");
   const skillChips = document.querySelectorAll(".skill-chip");
+  const meterItems = document.querySelectorAll(".meter-item");
+
+  function setMeterLive(skill, level) {
+    if (!meterLive) return;
+    meterLive.textContent = skill + " · proficiency " + level + "%";
+  }
+
+  function staggerVisibleChips() {
+    if (reduceMotion) return;
+    const visible = Array.from(skillChips).filter((chip) => {
+      const group = chip.closest(".skill-group");
+      return group && !group.classList.contains("is-dimmed");
+    });
+    visible.forEach((chip, i) => {
+      chip.classList.remove("is-entering");
+      void chip.offsetWidth;
+      chip.style.animationDelay = i * 0.035 + "s";
+      chip.classList.add("is-entering");
+    });
+  }
 
   filterBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -214,23 +496,180 @@
         const match = filter === "all" || category === filter;
         group.classList.toggle("is-dimmed", !match);
       });
+
+      meterItems.forEach((item) => {
+        const category = item.getAttribute("data-category");
+        const match = filter === "all" || category === filter;
+        item.classList.toggle("is-dimmed", !match);
+      });
+
+      staggerVisibleChips();
     });
   });
 
   skillChips.forEach((chip) => {
     chip.addEventListener("click", () => {
       const skill = chip.getAttribute("data-skill") || chip.textContent || "";
+      const level = chip.getAttribute("data-level") || "";
       const already = chip.classList.contains("is-selected");
       skillChips.forEach((c) => c.classList.remove("is-selected"));
+      meterItems.forEach((m) => m.classList.remove("is-active"));
       if (!already) {
         chip.classList.add("is-selected");
-        showToast(skill + " — part of my toolkit");
+        showToast(skill + (level ? " · " + level + "%" : " — part of my toolkit"));
+        if (level) setMeterLive(skill, level);
+        meterItems.forEach((m) => {
+          const name = (m.getAttribute("data-skill") || "").toLowerCase();
+          if (name && skill.toLowerCase().includes(name.toLowerCase())) {
+            m.classList.add("is-active");
+          }
+        });
+      } else if (meterLive) {
+        meterLive.textContent = "Select a skill chip or bar to explore";
       }
     });
   });
 
+  meterItems.forEach((item) => {
+    item.querySelector(".meter-btn")?.addEventListener("click", () => {
+      const skill = item.getAttribute("data-skill") || "";
+      const level = item.getAttribute("data-level") || "0";
+      meterItems.forEach((m) => m.classList.remove("is-active"));
+      item.classList.add("is-active");
+      setMeterLive(skill, level);
+      skillChips.forEach((c) => {
+        const chipSkill = (c.getAttribute("data-skill") || "").toLowerCase();
+        c.classList.toggle(
+          "is-selected",
+          chipSkill.includes(skill.toLowerCase()) || skill.toLowerCase().includes(chipSkill)
+        );
+      });
+    });
+  });
+
+  /* ---------- Career path scrubber + detail panel ---------- */
+  const careerNodes = Array.from(document.querySelectorAll(".career-node"));
+  const timelineItems = Array.from(document.querySelectorAll(".timeline-item"));
+  const careerDetail = document.getElementById("careerDetail");
+  const careerDetailKicker = document.getElementById("careerDetailKicker");
+  const careerDetailTitle = document.getElementById("careerDetailTitle");
+  const careerDetailOrg = document.getElementById("careerDetailOrg");
+  const careerDetailTime = document.getElementById("careerDetailTime");
+  const careerDetailPoints = document.getElementById("careerDetailPoints");
+  const careerDetailTags = document.getElementById("careerDetailTags");
+  const careerDetailBar = document.getElementById("careerDetailBar");
+  const careerToTimeline = [2, 1, 0];
+
+  const careerData = [
+    {
+      kicker: "Internship",
+      title: "Data Science Intern",
+      org: "CodeClause · Pune",
+      time: "Apr 2023 – May 2023",
+      points: [
+        "Built customer segmentation using K-means clustering.",
+        "Created AI-based Age & Gender detection models.",
+      ],
+      tags: ["Python", "ML", "K-means", "CV"],
+      focus: "78%",
+    },
+    {
+      kicker: "Early professional",
+      title: "Front-End Web Developer",
+      org: "Growdigis IT Solution Pvt Ltd · Pune",
+      time: "Jul 2023 – Sep 2023",
+      points: [
+        "Developed responsive webpages with backend integration.",
+        "Deployed a website for a service provider company.",
+      ],
+      tags: ["HTML", "CSS", "JavaScript", "PHP"],
+      focus: "72%",
+    },
+    {
+      kicker: "Current role",
+      title: "Gen AI Engineer",
+      org: "Hexaware Technologies · Pune",
+      time: "Aug 2024 – Present",
+      points: [
+        "Developed a Time Series Analysis project using PySpark SQL on Azure Databricks.",
+        "Built automated end-to-end real-time pipelines using Azure Data Factory and Databricks.",
+      ],
+      tags: ["Azure", "Databricks", "PySpark", "Gen AI"],
+      focus: "92%",
+    },
+  ];
+
+  function renderCareerDetail(i) {
+    const data = careerData[i];
+    if (!data || !careerDetail) return;
+
+    const apply = () => {
+      if (careerDetailKicker) careerDetailKicker.textContent = data.kicker;
+      if (careerDetailTitle) careerDetailTitle.textContent = data.title;
+      if (careerDetailOrg) careerDetailOrg.textContent = data.org;
+      if (careerDetailTime) careerDetailTime.textContent = data.time;
+      if (careerDetailPoints) {
+        careerDetailPoints.innerHTML = data.points.map((p) => "<li>" + p + "</li>").join("");
+      }
+      if (careerDetailTags) {
+        careerDetailTags.innerHTML = data.tags.map((t) => "<li>" + t + "</li>").join("");
+      }
+      if (careerDetailBar) careerDetailBar.style.setProperty("--focus", data.focus);
+      careerDetail.classList.remove("is-switching");
+    };
+
+    if (reduceMotion) {
+      apply();
+      return;
+    }
+    careerDetail.classList.add("is-switching");
+    window.setTimeout(apply, 180);
+  }
+
+  function setCareer(index, syncAccordion) {
+    const i = Math.max(0, Math.min(careerNodes.length - 1, index));
+    careerNodes.forEach((node, idx) => {
+      const active = idx === i;
+      node.classList.toggle("is-active", active);
+      node.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    if (careerFill) careerFill.style.width = (i / Math.max(1, careerNodes.length - 1)) * 80 + "%";
+    renderCareerDetail(i);
+    if (syncAccordion) {
+      const tIndex = careerToTimeline[i];
+      timelineItems.forEach((item, idx) => {
+        const open = idx === tIndex;
+        item.classList.toggle("is-open", open);
+        item.querySelector(".timeline-toggle")?.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    }
+  }
+
+  careerNodes.forEach((node) => {
+    node.addEventListener("click", () => {
+      setCareer(parseInt(node.getAttribute("data-career") || "0", 10), true);
+    });
+  });
+  setCareer(2, false);
+
+  window.__syncCareerScroll = function () {
+    if (!timelineItems.length || reduceMotion) return;
+    let activeCareer = 2;
+    timelineItems.forEach((item, idx) => {
+      const rect = item.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.55) {
+        const careerIdx = careerToTimeline.indexOf(idx);
+        if (careerIdx >= 0) activeCareer = careerIdx;
+      }
+    });
+    if (document.getElementById("experience")?.classList.contains("is-inview")) {
+      const current = careerNodes.findIndex((n) => n.classList.contains("is-active"));
+      if (current !== activeCareer) setCareer(activeCareer, false);
+    }
+  };
+
   /* ---------- Experience accordion ---------- */
-  document.querySelectorAll(".timeline-toggle").forEach((btn) => {
+  document.querySelectorAll(".timeline-toggle").forEach((btn, idx) => {
     btn.addEventListener("click", () => {
       const item = btn.closest(".timeline-item");
       if (!item) return;
@@ -242,9 +681,64 @@
       if (!open) {
         item.classList.add("is-open");
         btn.setAttribute("aria-expanded", "true");
+        const mapped = item.getAttribute("data-career-card");
+        const careerIdx =
+          mapped != null ? parseInt(mapped, 10) : careerToTimeline.indexOf(idx);
+        if (careerIdx >= 0) setCareer(careerIdx, false);
       }
     });
   });
+
+  /* ---------- Education journey ---------- */
+  const eduCards = Array.from(document.querySelectorAll(".edu-card"));
+  const eduSpineFill = document.getElementById("eduSpineFill");
+  const eduJourney = document.getElementById("eduJourney");
+
+  function setEdu(index) {
+    eduCards.forEach((card, i) => {
+      const active = i === index;
+      card.classList.toggle("is-active", active);
+      card.querySelector(".edu-card-toggle")?.setAttribute("aria-expanded", active ? "true" : "false");
+    });
+  }
+
+  eduCards.forEach((card, i) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".edu-card-toggle")) {
+        e.stopPropagation();
+        setEdu(card.classList.contains("is-active") ? -1 : i);
+        return;
+      }
+      setEdu(i);
+    });
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setEdu(i);
+      }
+    });
+  });
+
+  window.__syncEduScroll = function () {
+    if (!eduJourney || !eduSpineFill) return;
+    const rect = eduJourney.getBoundingClientRect();
+    const view = window.innerHeight || 1;
+    const start = view * 0.8;
+    const raw = (start - rect.top) / (rect.height + view * 0.3);
+    const pct = Math.max(0, Math.min(1, raw)) * 100;
+    eduSpineFill.style.height = pct + "%";
+
+    if (!reduceMotion && eduJourney.closest(".section")?.classList.contains("is-inview")) {
+      let active = 0;
+      eduCards.forEach((card, i) => {
+        if (card.getBoundingClientRect().top < view * 0.55) active = i;
+      });
+      if (!eduCards.some((c) => c.classList.contains("is-active") && document.activeElement === c)) {
+        const current = eduCards.findIndex((c) => c.classList.contains("is-active"));
+        if (current !== active) setEdu(active);
+      }
+    }
+  };
 
   /* ---------- Projects ---------- */
   const projectTabs = Array.from(document.querySelectorAll(".project-tab"));
@@ -252,6 +746,30 @@
   const projectPrev = document.getElementById("projectPrev");
   const projectNext = document.getElementById("projectNext");
   let projectIndex = 0;
+
+  function activatePipeline(active) {
+    if (!pipeline) return;
+    pipeline.classList.toggle("is-active", active);
+    const nodes = pipeline.querySelectorAll(".pipeline-node");
+    nodes.forEach((node) => node.classList.remove("is-lit"));
+    if (!active || reduceMotion) {
+      if (active) nodes.forEach((n) => n.classList.add("is-lit"));
+      return;
+    }
+    nodes.forEach((node, i) => {
+      window.setTimeout(() => node.classList.add("is-lit"), 220 + i * 280);
+    });
+  }
+
+  function activateProjectData(stage) {
+    if (!stage) return;
+    const stats = stage.querySelector("[data-animate-bars]");
+    if (stats) {
+      stats.classList.remove("is-hot");
+      void stats.offsetWidth;
+      stats.classList.add("is-hot");
+    }
+  }
 
   function showProject(index) {
     projectIndex = (index + projectTabs.length) % projectTabs.length;
@@ -264,7 +782,9 @@
       const match = i === projectIndex;
       stage.classList.toggle("active", match);
       stage.hidden = !match;
+      if (match) activateProjectData(stage);
     });
+    activatePipeline(projectIndex === 0);
   }
 
   projectTabs.forEach((tab, i) => {
@@ -285,6 +805,20 @@
     }
   });
 
+  if ("IntersectionObserver" in window) {
+    const projectIo = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && projectIndex === 0) activatePipeline(true);
+        });
+      },
+      { threshold: 0.35 }
+    );
+    if (projectPanel) projectIo.observe(projectPanel);
+  } else {
+    activatePipeline(true);
+  }
+
   /* ---------- Project spotlight (pointer only, normal cursor) ---------- */
   projectPanel?.addEventListener("pointermove", (e) => {
     const rect = projectPanel.getBoundingClientRect();
@@ -296,7 +830,7 @@
 
   /* ---------- Soft tilt on interactive panels ---------- */
   if (!reduceMotion) {
-    document.querySelectorAll(".project-panel, .contact-form, .cert-grid li").forEach((el) => {
+    document.querySelectorAll(".project-panel, .contact-form, .cert-grid li, .career-detail, .edu-card").forEach((el) => {
       el.addEventListener("pointermove", (e) => {
         const rect = el.getBoundingClientRect();
         const px = (e.clientX - rect.left) / rect.width - 0.5;
@@ -410,7 +944,6 @@
       contactForm.reset();
       showToast("Message sent");
     } catch (_) {
-      // Fallback: open mail client if FormSubmit is blocked/unavailable
       const subject = encodeURIComponent("Portfolio inquiry from " + name);
       const bodyText = encodeURIComponent(
         "Name: " + name + "\nEmail: " + email + "\n\n" + message
