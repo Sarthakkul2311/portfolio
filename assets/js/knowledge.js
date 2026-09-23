@@ -1,6 +1,7 @@
 /**
  * Profile knowledge used by the chatbot.
- * Keep this aligned with the website + resume. Answers are limited to this.
+ * Keep this aligned with the website + resume.
+ * The model reasons freely from this data — do not treat it as hardcoded Q&A scripts.
  */
 window.PORTFOLIO_KNOWLEDGE = `
 Name: Sarthak Kulkarni

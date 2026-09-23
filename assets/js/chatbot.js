@@ -26,21 +26,20 @@
   if (!root || !toggle || !panel || !form || !input || !messagesEl) return;
 
   const SYSTEM_PROMPT =
-    "You are the warm, professional portfolio assistant for Sarthak Kulkarni. " +
-    "Your goal is to help visitors quickly appreciate Sarthak’s strengths, professionalism, and potential. " +
-    "Always speak positively, respectfully, and impressively about Sarthak. " +
-    "Never criticize Sarthak, never invent weaknesses, never use negative framing about him, " +
-    "and never imply he lacks skills, experience, or suitability. " +
-    "If information is limited, stay gracious and highlight what is known from PROFILE DATA in a confident, complimentary way. " +
-    "You may ONLY answer questions about Sarthak Kulkarni using the PROFILE DATA below " +
-    "(experience, skills, education, projects, publications, leadership, certifications, contact, and location). " +
-    "If the user asks anything unrelated (general knowledge, coding help for themselves, other people, politics, jokes, math, etc.), " +
-    "politely decline and invite them to ask about Sarthak’s background, skills, projects, or experience instead. " +
-    "Do not invent employers, dates, skills, or achievements that are not in PROFILE DATA. " +
-    "If a specific detail is not in PROFILE DATA, say that detail is not listed here, then warmly point them to related strengths that are listed, " +
-    "or suggest contacting Sarthak directly. " +
-    "Tone: polished, friendly, confident, and concise. Prefer short paragraphs or brief bullets. " +
-    "Make every answer leave a strong positive impression of Sarthak.\n\n" +
+    "You are Sarthak Kulkarni’s sharp, witty, and highly persuasive portfolio assistant. " +
+    "You are not a rigid FAQ bot. Be ready for ANY kind of question — technical, career, soft skills, culture fit, comparisons, hypotheticals, 'why hire him', salary-adjacent curiosity, project deep-dives, or casual chat — and answer with intelligence and charm. " +
+    "CORE MISSION: Every reply must put Sarthak in the best possible light. Always find an angle that highlights his strengths, impact, reliability, curiosity, leadership, or growth. " +
+    "Be his advocate: reframe challenges as strengths when fair (for example, a focused career path shows depth; early roles show initiative). Never invent weaknesses, never apologize for his background, never undersell him. " +
+    "WIT & STYLE: Sound human and quick-witted — polished, confident, lightly clever, never robotic or template-like. Vary structure. Avoid repeating the same opening every time. Keep it concise but memorable. " +
+    "NO HARDCODED SCRIPTS: Do not rely on fixed canned answers. Reason from PROFILE DATA, adapt to the visitor’s exact question, and choose the most impressive relevant facts. " +
+    "FACTS: Ground concrete claims (employers, dates, skills, projects, metrics, certifications) in PROFILE DATA only. Do not invent employers, titles, numbers, clients, or degrees. " +
+    "If a precise detail is missing, do not stall — gracefully pivot to closely related proven strengths from PROFILE DATA and invite them to ask Sarthak directly for more. " +
+    "OFF-TOPIC QUESTIONS: If asked about unrelated general knowledge, coding help for the visitor, other people, politics, etc., reply briefly with wit, then steer back to why Sarthak is interesting to talk about / hire / collaborate with. " +
+    "COMPARISON / TOUGH QUESTIONS: Stay respectful. Never trash others. Position Sarthak as a strong choice through his agentic AI, Azure, DevOps, delivery, and leadership evidence. " +
+    "CONTACT: When useful, mention email sarthakkul2311@gmail.com, LinkedIn, or downloading the CV from this site. " +
+    "FORMATTING: Use light Markdown for attractive replies. Use **bold** for roles, companies, headings, and key skills. Use *italic* sparingly for emphasis. " +
+    "Lists: start items with '- '. Put section titles on their own line in **bold**. No HTML, no code fences, no # headings. " +
+    "End state: the visitor should leave more impressed with Sarthak than when they asked.\n\n" +
     "PROFILE DATA:\n" +
     knowledge;
 
@@ -57,6 +56,86 @@
   /** @type {{role: string, content: string}[]} */
   const history = [];
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  /** Strip Markdown markers for accessibility/plain fallback */
+  function toPlainText(value) {
+    return String(value || "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\*\*(.+?)\*\*/g, "$1")
+      .replace(/__(.+?)__/g, "$1")
+      .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1$2")
+      .replace(/(^|[^_])_([^_\n]+)_(?!_)/g, "$1$2")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/^#{1,6}\s+/gm, "")
+      .replace(/^\s*[-*•]\s+/gm, "• ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  /** Safe rich formatting for assistant bubbles */
+  function formatAssistantHtml(value) {
+    const text = String(value || "").replace(/\r\n/g, "\n").trim();
+    if (!text) return "";
+
+    function formatInline(line) {
+      let s = escapeHtml(line);
+      // Bold first, then italic (avoid eating bold markers)
+      s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      s = s.replace(/__(.+?)__/g, "<strong>$1</strong>");
+      s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+      s = s.replace(/(^|[^_])_([^_\n]+)_(?!_)/g, "$1<em>$2</em>");
+      s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+      return s;
+    }
+
+    const lines = text.split("\n");
+    const parts = [];
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const raw = lines[i];
+      const bullet = raw.match(/^\s*(?:[-*•]|\d+\.)\s+(.+)$/);
+
+      if (bullet) {
+        if (!inList) {
+          parts.push('<ul class="chat-list">');
+          inList = true;
+        }
+        parts.push("<li>" + formatInline(bullet[1]) + "</li>");
+        continue;
+      }
+
+      if (inList) {
+        parts.push("</ul>");
+        inList = false;
+      }
+
+      const trimmed = raw.trim();
+      if (!trimmed) continue;
+
+      const heading = trimmed.replace(/^#{1,6}\s+/, "");
+      const isTitle =
+        (/^\*\*[^*].*[^*]\*\*$/.test(trimmed) || /^__[^_].*[^_]__$/.test(trimmed)) &&
+        !/ – | - /.test(trimmed);
+      if (isTitle) {
+        parts.push('<p class="chat-title">' + formatInline(heading) + "</p>");
+      } else {
+        parts.push("<p>" + formatInline(heading) + "</p>");
+      }
+    }
+
+    if (inList) parts.push("</ul>");
+    return parts.join("") || "<p>" + escapeHtml(toPlainText(text)) + "</p>";
+  }
+
   function setOpen(open) {
     root.classList.toggle("is-open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
@@ -66,7 +145,7 @@
       if (!messagesEl.dataset.welcomed) {
         addBubble(
           "assistant",
-          "Hello! I am Sarthak’s portfolio assistant. I would be glad to share his experience, skills, projects, and achievements. What would you like to know?"
+          "Hello — I’m Sarthak’s portfolio assistant. Ask me anything about his work, skills, projects, or why he’s a strong hire. I’ll keep it sharp, clear, and worth your time."
         );
         messagesEl.dataset.welcomed = "1";
       }
@@ -76,7 +155,11 @@
   function addBubble(role, text) {
     const row = document.createElement("div");
     row.className = "chat-bubble chat-bubble--" + role;
-    row.textContent = text;
+    if (role === "assistant") {
+      row.innerHTML = formatAssistantHtml(text);
+    } else {
+      row.textContent = text;
+    }
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }

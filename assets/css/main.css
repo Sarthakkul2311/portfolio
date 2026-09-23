@@ -3117,7 +3117,6 @@ html.dark .chat-toggle {
   padding: 0.7rem 0.85rem;
   font-size: 0.92rem;
   line-height: 1.5;
-  white-space: pre-wrap;
 }
 
 .chat-bubble--assistant {
@@ -3127,10 +3126,77 @@ html.dark .chat-toggle {
   color: var(--text);
 }
 
+.chat-bubble--assistant p {
+  margin: 0;
+}
+
+.chat-bubble--assistant p + p,
+.chat-bubble--assistant p + .chat-list,
+.chat-bubble--assistant .chat-list + p {
+  margin-top: 0.55rem;
+}
+
+.chat-bubble--assistant .chat-title {
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+html.dark .chat-bubble--assistant .chat-title {
+  color: var(--text);
+}
+
+.chat-bubble--assistant strong {
+  font-weight: 650;
+  color: var(--ink);
+}
+
+html.dark .chat-bubble--assistant strong {
+  color: #f0f4f8;
+}
+
+.chat-bubble--assistant em {
+  font-style: italic;
+  color: var(--navy-soft);
+}
+
+html.dark .chat-bubble--assistant em {
+  color: var(--brass-soft);
+}
+
+.chat-bubble--assistant .chat-list {
+  margin: 0.45rem 0 0;
+  padding-left: 1.05rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.chat-bubble--assistant .chat-list li {
+  margin: 0;
+  padding-left: 0.15rem;
+}
+
+.chat-bubble--assistant .chat-list li::marker {
+  color: var(--sage);
+}
+
+.chat-bubble--assistant code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: rgba(14, 26, 43, 0.06);
+  padding: 0.05em 0.3em;
+  border-radius: 3px;
+}
+
+html.dark .chat-bubble--assistant code {
+  background: rgba(231, 236, 242, 0.08);
+}
+
 .chat-bubble--user {
   align-self: flex-end;
   background: var(--ink);
   color: #f7f8fa;
+  white-space: pre-wrap;
 }
 
 html.dark .chat-bubble--user {
