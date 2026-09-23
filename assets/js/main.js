@@ -279,11 +279,11 @@
 
   /* ---------- Role rotator ---------- */
   const roles = [
-    "Data Engineer",
-    "Azure Specialist",
-    "Databricks Practitioner",
-    "ML Enthusiast",
-    "Full-Stack Builder",
+    "Agentic AI Systems",
+    "Azure AI Foundry",
+    "RAG Pipelines",
+    "Azure DevOps",
+    "Multi-Agent Architect",
   ];
 
   if (roleRotator && !reduceMotion) {
@@ -368,11 +368,11 @@
 
   /* ---------- Domain radar ---------- */
   const domains = [
-    { name: "Gen AI", value: 88, blurb: "Building intelligent systems and AI-assisted workflows" },
-    { name: "Data Eng", value: 90, blurb: "Pipelines, Databricks, PySpark, and analytics-ready data" },
-    { name: "Cloud", value: 86, blurb: "Azure services, Data Factory, and cloud-native delivery" },
-    { name: "Web", value: 74, blurb: "Responsive interfaces with React and modern front-end craft" },
-    { name: "Leadership", value: 82, blurb: "Student associations, sports, and cultural coordination" },
+    { name: "Agentic AI", value: 92, blurb: "Multi-agent systems, RAG pipelines, and LLM orchestration on Azure AI Foundry" },
+    { name: "DevOps", value: 88, blurb: "CI/CD, Azure DevOps, Web Apps, and Function Apps for reliable release automation" },
+    { name: "Cloud", value: 90, blurb: "Microsoft Azure platforms for production GenAI and enterprise workflows" },
+    { name: "Data", value: 82, blurb: "Python, SQL, Databricks, PySpark, and time series analytics" },
+    { name: "Leadership", value: 84, blurb: "Mentoring interns, team coordination, and campus leadership roles" },
   ];
 
   (function buildRadar() {
@@ -558,44 +558,69 @@
   const careerDetailPoints = document.getElementById("careerDetailPoints");
   const careerDetailTags = document.getElementById("careerDetailTags");
   const careerDetailBar = document.getElementById("careerDetailBar");
-  const careerToTimeline = [2, 1, 0];
+  const careerToTimeline = [4, 3, 2, 1, 0];
 
   const careerData = [
+    {
+      kicker: "Growth leadership",
+      title: "Growth Ambassador",
+      org: "Younity.in · Delhi",
+      time: "Jun 2021 – Jul 2021",
+      points: [
+        "Led a team of 15 interns, coordinating task allocation, development strategy, and delivery timelines.",
+        "Supported business development and sales coordination initiatives across growth programs.",
+      ],
+      tags: ["Leadership", "Team Lead", "Growth"],
+      focus: "78%",
+    },
+    {
+      kicker: "Early engineering",
+      title: "Trainee Software Developer",
+      org: "White Code Technology Solutions Pvt. Ltd. · Pune",
+      time: "Sep 2021 – Dec 2021",
+      points: [
+        "Developed responsive websites for educational institutions with clean, accessible UI patterns.",
+        "Researched and prototyped smart contracts and NFT creation workflows on blockchain platforms.",
+      ],
+      tags: ["Web", "UI", "Blockchain"],
+      focus: "72%",
+    },
     {
       kicker: "Internship",
       title: "Data Science Intern",
       org: "CodeClause · Pune",
       time: "Apr 2023 – May 2023",
       points: [
-        "Built customer segmentation using K-means clustering.",
-        "Created AI-based Age & Gender detection models.",
+        "Built a customer segmentation model using K-means clustering to support trend analysis and targeted insights.",
+        "Developed an AI-based age and gender detection model, covering data preprocessing, training, and evaluation.",
       ],
       tags: ["Python", "ML", "K-means", "CV"],
-      focus: "78%",
+      focus: "80%",
     },
     {
-      kicker: "Early professional",
+      kicker: "Professional",
       title: "Front-End Web Developer",
-      org: "Growdigis IT Solution Pvt Ltd · Pune",
+      org: "Growdigis IT Solution Pvt. Ltd. · Pune",
       time: "Jul 2023 – Sep 2023",
       points: [
-        "Developed responsive webpages with backend integration.",
-        "Deployed a website for a service provider company.",
+        "Developed responsive web interfaces with backend integration for client-facing digital service platforms.",
+        "Deployed a production website enabling a service provider to digitize and scale their business operations.",
       ],
-      tags: ["HTML", "CSS", "JavaScript", "PHP"],
-      focus: "72%",
+      tags: ["HTML", "CSS", "JavaScript", "Web"],
+      focus: "76%",
     },
     {
       kicker: "Current role",
-      title: "Gen AI Engineer",
+      title: "GenAI Developer / DevOps Engineer",
       org: "Hexaware Technologies · Pune",
       time: "Aug 2024 – Present",
       points: [
-        "Developed a Time Series Analysis project using PySpark SQL on Azure Databricks.",
-        "Built automated end-to-end real-time pipelines using Azure Data Factory and Databricks.",
+        "Designed and deployed a production triaging agent on Azure that autonomously identifies issues, logs tickets, and resolves in-scope incidents — reducing manual operational effort by approximately 70%.",
+        "Architected a multi-agent application to generate Informed Consent Forms across N countries × N studies via Azure AI Foundry.",
+        "Built end-to-end agentic solutions using RAG, Azure Web Apps, Function Apps, and Azure DevOps CI/CD.",
       ],
-      tags: ["Azure", "Databricks", "PySpark", "Gen AI"],
-      focus: "92%",
+      tags: ["Azure AI Foundry", "RAG", "Azure DevOps", "Agentic AI"],
+      focus: "94%",
     },
   ];
 
@@ -650,11 +675,11 @@
       setCareer(parseInt(node.getAttribute("data-career") || "0", 10), true);
     });
   });
-  setCareer(2, false);
+  setCareer(4, false);
 
   window.__syncCareerScroll = function () {
     if (!timelineItems.length || reduceMotion) return;
-    let activeCareer = 2;
+    let activeCareer = 4;
     timelineItems.forEach((item, idx) => {
       const rect = item.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.55) {
@@ -908,7 +933,7 @@
 
     const inbox =
       (window.PORTFOLIO_CONFIG && window.PORTFOLIO_CONFIG.contactEmail) ||
-      "sarthak.n.kulkarni@gmail.com";
+      "sarthakkul2311@gmail.com";
 
     if (formNote) {
       formNote.classList.remove("error");

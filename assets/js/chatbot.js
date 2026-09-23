@@ -46,12 +46,12 @@
   const NETWORK_BLOCK_MESSAGE =
     "It looks like your current Wi‑Fi or network is blocking this assistant. " +
     "Please switch to another network (for example mobile data or home internet) and try again. " +
-    "You can also reach Sarthak anytime at sarthak.n.kulkarni@gmail.com.";
+    "You can also reach Sarthak anytime at sarthakkul2311@gmail.com.";
 
   const GENERIC_ERROR_MESSAGE =
     "I am briefly unable to respond just now. Please try again in a moment. " +
     "Meanwhile, feel free to explore Sarthak’s experience and projects on this site, " +
-    "or email sarthak.n.kulkarni@gmail.com.";
+    "or email sarthakkul2311@gmail.com.";
 
   /** @type {{role: string, content: string}[]} */
   const history = [];

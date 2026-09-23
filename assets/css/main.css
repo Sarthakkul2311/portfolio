@@ -1444,6 +1444,11 @@ html.dark .metric-value {
   padding-top: 0.15rem;
 }
 
+.career-track--five {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.35rem;
+}
+
 .career-rail-line,
 .career-track::before {
   content: none;
@@ -3292,6 +3297,19 @@ main,
   .data-stats,
   .career-board {
     grid-template-columns: 1fr;
+  }
+
+  .career-track--five {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .career-track--five .career-role {
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+
+  .career-track--five .career-year {
+    font-size: 0.95rem;
   }
 
   .career-detail {
