@@ -14,7 +14,7 @@
     // false = always use Cloudflare Worker (recommended)
     // true  = on localhost only, use node scripts/dev-chat-proxy.cjs
     forceLocalProxy: false,
-    chatModel: "llama-3.3-70b-versatile",
+    chatModel: "openai/gpt-oss-20b",
     get chatProxyUrl() {
       if (this.forceLocalProxy && isLocal) return this.chatProxyUrlLocal;
       return this.chatProxyUrlProduction || this.chatProxyUrlLocal;

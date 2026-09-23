@@ -69,7 +69,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   const messages = Array.isArray(payload.messages) ? payload.messages.slice(-12) : [];
-  const model = typeof payload.model === "string" ? payload.model : "llama-3.3-70b-versatile";
+  const model = typeof payload.model === "string" ? payload.model : "openai/gpt-oss-20b";
 
   try {
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {

@@ -6,11 +6,12 @@
   const config = window.PORTFOLIO_CONFIG || {};
   const knowledge = window.PORTFOLIO_KNOWLEDGE || "";
   const proxyUrl = String(
-    (typeof config.chatProxyUrl === "string" && config.chatProxyUrl) ||
+    (config.chatProxyUrl && String(config.chatProxyUrl)) ||
+      config.chatProxyUrlProduction ||
       config.chatProxyUrlLocal ||
       ""
   ).trim();
-  const model = config.chatModel || "llama-3.3-70b-versatile";
+  const model = config.chatModel || "openai/gpt-oss-20b";
 
   const root = document.getElementById("chatbot");
   const toggle = document.getElementById("chatToggle");

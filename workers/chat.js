@@ -69,7 +69,7 @@ export default {
     }
 
     const messages = Array.isArray(payload.messages) ? payload.messages.slice(-12) : [];
-    const model = typeof payload.model === "string" ? payload.model : "llama-3.3-70b-versatile";
+    const model = typeof payload.model === "string" ? payload.model : "openai/gpt-oss-20b";
 
     if (!messages.length) {
       return new Response(JSON.stringify({ error: "messages array is required" }), {
